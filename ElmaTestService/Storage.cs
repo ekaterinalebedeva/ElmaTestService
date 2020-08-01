@@ -22,10 +22,19 @@ namespace ElmaTestService
         public bool Add(string key, TItem value)
         {
             _values[key] = value;
+            OnAdd(key);
             return true;
         }
 
-        public bool Remove(string key) => _values.TryRemove(key, out var value);
+        public bool Remove(string key)
+        {
+            var result = _values.TryRemove(key, out var value);
+            if (result)
+            {
+                OnDelete(key);
+            }
+            return result;
+        }
 
         public bool TryGetByKey(string key, out TItem value) => _values.TryGetValue(key, out value);
 
