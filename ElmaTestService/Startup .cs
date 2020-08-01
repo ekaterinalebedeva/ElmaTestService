@@ -7,6 +7,9 @@ using Owin;
 using System.Web.Http;
 using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
+using Microsoft.Owin;
+
+[assembly: OwinStartup(typeof(ElmaTestService.Startup))]
 
 namespace ElmaTestService
 {

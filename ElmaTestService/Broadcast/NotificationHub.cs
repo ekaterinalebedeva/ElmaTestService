@@ -24,6 +24,12 @@ namespace ElmaTestService.Broadcast
         {
             return _broadcast.MyStorage.Values.Keys.ToList();
         }
+        public override Task OnConnected()
+        {
+            Clients.Caller.GetAllKeys();
+            Console.WriteLine("hello");
+            return base.OnConnected();
+        }
     }
 
     public class Broadcast
@@ -51,7 +57,7 @@ namespace ElmaTestService.Broadcast
 
             _otherStorage.Clear();
             var myKeys = Startup.MyStorage.Values.Keys.ToList();
-            myKeys.ForEach(myKey => _otherStorage[myKey]="");
+            myKeys.ForEach(myKey => _otherStorage[myKey] = "");
 
             //_timer = new Timer(UpdateStockPrices, null, _updateInterval, _updateInterval);
         }
@@ -116,10 +122,10 @@ namespace ElmaTestService.Broadcast
         //    return true;
         //}
 
-        private void BroadcastStockPrice(string key)
-        {
-            Clients.All.updateStockPrice(key);
-        }
+        //private void BroadcastStockPrice(string key)
+        //{
+        //    Clients.All.updateStockPrice(key);
+        //}
 
     }
 }
