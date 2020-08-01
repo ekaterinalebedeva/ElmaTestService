@@ -12,7 +12,7 @@ namespace ElmaTestService.Broadcasting
     public class Broadcast
     {
         public readonly IStorage<string, string> MyStorage = Program.MyStorage;
-        private readonly string _hubUrl = "http://192.168.1.201:5000";
+        
         /// <summary>
         ///  Singleton instance
         /// </summary>
@@ -43,13 +43,13 @@ namespace ElmaTestService.Broadcasting
         /// </summary>
         public void OnClientConnected(dynamic client)
         {
-            client.GetAllKeys(MyStorage.GetAllKeys(), _hubUrl);
+            client.GetAllKeys(MyStorage.GetAllKeys());
             Console.WriteLine("server: отправил ключи");
         }
 
         public void AddKey(object key)
         {
-            Clients.All.AddKey(key, _hubUrl);
+            Clients.All.AddKey(key);
             Console.WriteLine($"server: клиенты, добавьте мой ключ {key}");
         }
         public void DeleteKey(object key)

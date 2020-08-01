@@ -25,7 +25,7 @@ namespace ElmaTestService
         /// Коллекция подключений к другим серверам для отправки им уведомлений
         /// </summary>
         public static List<NotificationClient> Clients { get; } = new List<NotificationClient>();
-
+        public static string MyUrl { get; } = "http://192.168.1.201:5000";
         static void Main(string[] args)
         {
             // Присоединяем наблюдателя-сервера, который будет отсылать уведомления клиентам

@@ -20,7 +20,7 @@ namespace ElmaTestService.Broadcasting
         private readonly IDictionary<string, string> _storage;
         private HubConnection _hubConnection;
         private IHubProxy _notificationHubProxy;
-        private string _url; 
+        private string _hubUrl; 
 
         public NotificationClient(string url, IDictionary<string, string> storage)
         {
@@ -36,26 +36,26 @@ namespace ElmaTestService.Broadcasting
 
         private async Task<bool> SetConnectionAsync(string url)
         {
-            _url = url;
+            _hubUrl = url;
             _hubConnection = new HubConnection($"{url}/signalr");
             _notificationHubProxy = _hubConnection.CreateHubProxy("NotificationHub");
-            _notificationHubProxy.On<IEnumerable<string>, string>("GetAllKeys", (keys, serverurl) =>
+            _notificationHubProxy.On<IEnumerable<string>>("GetAllKeys", keys =>
             {
                 foreach (var key in keys)
                 {
-                    _storage[key] = _url;
+                    _storage[key] = _hubUrl;
                 }
-                Console.WriteLine($"client: Пришли все ключи от сервера {serverurl}");
+                Console.WriteLine($"client: Пришли все ключи от сервера {_hubUrl}");
             });
-            _notificationHubProxy.On<string, string>("AddKey", (key, serverurl) =>
+            _notificationHubProxy.On<string>("AddKey", key =>
             {
-                _storage[key] = serverurl;
-                Console.WriteLine($"client: добавил ключ {key} сервера {serverurl}");
+                _storage[key] = _hubUrl;
+                Console.WriteLine($"client: добавил ключ {key} сервера {_hubUrl}");
             });
-            _notificationHubProxy.On<string, string>("DeleteKey", (key, serverurl) =>
+            _notificationHubProxy.On<string>("DeleteKey", key =>
             {
                 _storage.Remove(key);
-                Console.WriteLine($"client: удалил ключ {key} сервера {serverurl}");
+                Console.WriteLine($"client: удалил ключ {key} сервера {_hubUrl}");
             });
            
             await _hubConnection.Start();
@@ -73,8 +73,8 @@ namespace ElmaTestService.Broadcasting
         /// <param name="key"></param>
         public void AddKey(object key)
         {
-            _notificationHubProxy.Invoke("AddClientKey", key, _url);
-            Console.WriteLine($"client: сервер, добавь ключ {key} к {_url}");
+            _notificationHubProxy.Invoke("AddClientKey", key, Program.MyUrl);
+            Console.WriteLine($"client: сервер, добавь ключ {key} к {Program.MyUrl}");
         }
         /// <summary>
         /// Послать хабу команду удалить ключ
