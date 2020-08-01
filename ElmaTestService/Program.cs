@@ -30,6 +30,7 @@ namespace ElmaTestService
         {
             // Присоединяем наблюдателя-сервера, который будет отсылать уведомления клиентам
             MyStorage.Attach(new HubObserver<string>());
+            MyStorage.Attach(new ClientObserver<string>);
             HostFactory.Run(x =>
             {
                 x.Service<ServiceApi>(p =>
@@ -66,14 +67,14 @@ namespace ElmaTestService
                 catch
                 { }
                 webServer = WebApp.Start<Startup>(options);
-                try
-                {
-                    var url = "http://localhost:5000";
-                    var client1 = new NotificationClient(url, Program.OtherServersKeys);
-                    Program.Clients.Add(client1);
-                }
-                catch
-                { }
+                //try
+                //{
+                //    var url = "http://localhost:5000";
+                //    var client1 = new NotificationClient(url, Program.OtherServersKeys);
+                //    Program.Clients.Add(client1);
+                //}
+                //catch
+                //{ }
             }
 
             public void Stop()
