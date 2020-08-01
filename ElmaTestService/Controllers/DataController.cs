@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ElmaTestService.Broadcast;
+using System;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
@@ -8,7 +9,7 @@ namespace ElmaTestService.Controllers
 {
     public class DataController : ApiController
     {
-        private static Storage<string> _storage = Startup.MyStorage;
+        private readonly Storage<string> _storage = Startup.MyStorage;
 
         [HttpGet]
         public IHttpActionResult Get()
@@ -34,6 +35,7 @@ namespace ElmaTestService.Controllers
             {
                 return NotFound();
             }
+            SendMessage("delete", key);
             return Ok($"{key} deleted");
         }
 
@@ -45,7 +47,17 @@ namespace ElmaTestService.Controllers
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
             }
             _storage.Add(key, value);
+            SendMessage("add", key);
             return Ok($"{key} added");
+        }
+
+        private void SendMessage(string method, string key)
+        {
+            // Получаем контекст хаба
+            var context =
+                Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
+            // отправляем сообщение
+            context.Clients.All.displayMessage(method, key);
         }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using Topshelf;
+using ElmaTestService.Broadcast;
 
 namespace ElmaTestService
 {
@@ -29,7 +30,7 @@ namespace ElmaTestService
         {
             IDisposable webServer;
             StartOptions options = new StartOptions();
-            
+            IDisposable client;
             public ServiceApi()
             {
                 options.Urls.Add("http://localhost:5000");
@@ -37,12 +38,14 @@ namespace ElmaTestService
             }
             public void Start()
             {
+                client = new NotificationClient("http://192.168.1.175:5000");
                 webServer = WebApp.Start<Startup>(options);
             }
 
             public void Stop()
             {
                 webServer.Dispose();
+                client.Dispose();
             }
         }
     }

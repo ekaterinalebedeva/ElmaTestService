@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Owin;
 using System.Web.Http;
 using System.Web.Mvc;
+using Microsoft.AspNet.SignalR;
 
 namespace ElmaTestService
 {
@@ -24,7 +25,7 @@ namespace ElmaTestService
             );
 
             appBuilder.UseWebApi(config);
-
+            appBuilder.MapSignalR();
             MyStorage.Add("1", "fswedfsedfsd");
         }
     }
