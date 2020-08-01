@@ -8,25 +8,25 @@ using System.Threading.Tasks;
 
 namespace ElmaTestService
 {
-    public interface IStorage<TItem>
+    public interface IStorage<TKey, TValue>
     {
-        bool Add(string key, TItem value);
-        bool Remove(string key);
-        bool TryGetByKey(string key, out TItem value);
-        IEnumerable<string> GetAllKeys();
+        bool Add(TKey key, TValue value);
+        bool Remove(TKey key);
+        bool TryGetByKey(TKey key, out TValue value);
+        IEnumerable<TKey> GetAllKeys();
     }
-    public class Storage<TItem> : Observable<string>, IStorage<TItem>
+    public class Storage<TKey, TValue> : Observable<TKey>, IStorage<TKey, TValue>
     {
-        private ConcurrentDictionary<string, TItem> _values = new ConcurrentDictionary<string, TItem>();
+        private ConcurrentDictionary<TKey, TValue> _values = new ConcurrentDictionary<TKey, TValue>();
 
-        public bool Add(string key, TItem value)
+        public bool Add(TKey key, TValue value)
         {
             _values[key] = value;
             OnAdd(key);
             return true;
         }
 
-        public bool Remove(string key)
+        public bool Remove(TKey key)
         {
             var result = _values.TryRemove(key, out var value);
             if (result)
@@ -36,9 +36,9 @@ namespace ElmaTestService
             return result;
         }
 
-        public bool TryGetByKey(string key, out TItem value) => _values.TryGetValue(key, out value);
+        public bool TryGetByKey(TKey key, out TValue value) => _values.TryGetValue(key, out value);
 
-        public IEnumerable<string> GetAllKeys()
+        public IEnumerable<TKey> GetAllKeys()
         {
             return _values.Keys;
         }

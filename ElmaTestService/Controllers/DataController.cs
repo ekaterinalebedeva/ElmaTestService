@@ -9,7 +9,7 @@ namespace ElmaTestService.Controllers
 {
     public class DataController : ApiController
     {
-        private readonly Storage<string> _storage = Program.MyStorage;
+        private readonly Storage<string, string> _storage = Program.MyStorage;
 
         [HttpGet]
         public IHttpActionResult Get()

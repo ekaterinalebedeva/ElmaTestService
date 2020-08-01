@@ -20,12 +20,20 @@ namespace ElmaTestService.Broadcasting
         {
             _broadcast = broadcast;
         }
+
         public override Task OnConnected()
         {
             _broadcast.OnClientConnected(Clients.Caller);
             return base.OnConnected();
         }
+
+        public void AddClientKey(string key, string url)
+        {
+            _broadcast.AddClientKey(key, url);
+        }
+        public void DeleteClientKey(string key)
+        {
+            _broadcast.DeleteClientKey(key);
+        }
     }
-
-
 }

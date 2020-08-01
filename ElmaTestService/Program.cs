@@ -5,6 +5,9 @@ using System.Net.Http;
 using Topshelf;
 using ElmaTestService.Broadcasting;
 using ElmaTestService.Observers.Hub;
+using System.Collections.Concurrent;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace ElmaTestService
 {
@@ -13,7 +16,16 @@ namespace ElmaTestService
         /// <summary>
         /// Главное хранилище хэшей
         /// </summary>
-        public static Storage<string> MyStorage = new Storage<string>();
+        public static Storage<string, string> MyStorage { get; } = new Storage<string, string>();
+        /// <summary>
+        /// Словарь с ключами, которые находятся на других серверах
+        /// </summary>
+        public static ConcurrentDictionary<string, string> OtherServersKeys { get; } = new ConcurrentDictionary<string, string>();
+        /// <summary>
+        /// Коллекция подключений к другим серверам для отправки им уведомлений
+        /// </summary>
+        public static List<NotificationClient> Clients { get; } = new List<NotificationClient>();
+
         static void Main(string[] args)
         {
             // Присоединяем наблюдателя-сервера, который будет отсылать уведомления клиентам
@@ -37,7 +49,6 @@ namespace ElmaTestService
 
             IDisposable webServer;
             StartOptions options = new StartOptions();
-            IDisposable client;
             public ServiceApi()
             {
                 options.Urls.Add("http://localhost:5000");
@@ -48,25 +59,26 @@ namespace ElmaTestService
                 
                 try
                 {
-                    var url = "http://192.168.1.175:5000/signalr";
-                    client = new NotificationClient(url);
+                    var url = "http://192.168.1.175:5000";
+                    var client = new NotificationClient(url, Program.OtherServersKeys);
+                    Program.Clients.Add(client);
                 }
                 catch
                 { }
                 webServer = WebApp.Start<Startup>(options);
-                //try
-                //{
-                //    var url = "http://localhost:5000/signalr";
-                //    var client1 = new NotificationClient(url);
-                //}
-                //catch
-                //{ }
+                try
+                {
+                    var url = "http://localhost:5000";
+                    var client1 = new NotificationClient(url, Program.OtherServersKeys);
+                    Program.Clients.Add(client1);
+                }
+                catch
+                { }
             }
 
             public void Stop()
             {
                 webServer?.Dispose();
-                client?.Dispose();
             }
         }
     }

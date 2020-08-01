@@ -111,6 +111,7 @@
     <Compile Include="Broadcasting\NotificationClient.cs" />
     <Compile Include="Broadcasting\NotificationHub.cs" />
     <Compile Include="Controllers\DataController.cs" />
+    <Compile Include="Observers\Hub\ClientObserver.cs" />
     <Compile Include="Observers\Hub\HubObserver.cs" />
     <Compile Include="Observers\AObservable.cs" />
     <Compile Include="Observers\IObserver.cs" />
