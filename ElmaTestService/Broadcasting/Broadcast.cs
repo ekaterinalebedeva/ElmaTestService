@@ -11,7 +11,7 @@ namespace ElmaTestService.Broadcasting
 {
     public class Broadcast
     {
-        public readonly IStorage<string> MyStorage = Startup.MyStorage;
+        public readonly IStorage<string> MyStorage = Program.MyStorage;
         /// <summary>
         ///  Singleton instance
         /// </summary>

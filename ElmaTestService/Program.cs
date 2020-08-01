@@ -4,13 +4,20 @@ using System.Linq;
 using System.Net.Http;
 using Topshelf;
 using ElmaTestService.Broadcasting;
+using ElmaTestService.Observers.Hub;
 
 namespace ElmaTestService
 {
     class Program
-    {
+    {            
+        /// <summary>
+        /// Главное хранилище хэшей
+        /// </summary>
+        public static Storage<string> MyStorage = new Storage<string>();
         static void Main(string[] args)
         {
+            // Присоединяем наблюдателя-сервера, который будет отсылать уведомления клиентам
+            MyStorage.Attach(new HubObserver<string>());
             HostFactory.Run(x =>
             {
                 x.Service<ServiceApi>(p =>
@@ -23,11 +30,11 @@ namespace ElmaTestService
                 x.SetDescription("Elma Host");
                 x.SetDisplayName("Elma");
                 x.SetServiceName("Elma");
-
             });
         }
         public class ServiceApi
         {
+
             IDisposable webServer;
             StartOptions options = new StartOptions();
             IDisposable client;
@@ -38,6 +45,7 @@ namespace ElmaTestService
             }
             public void Start()
             {
+                
                 try
                 {
                     var url = "http://192.168.1.175:5000/signalr";

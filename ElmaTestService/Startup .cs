@@ -16,11 +16,10 @@ namespace ElmaTestService
 {
     public class Startup
     {
-        public static Storage<string> MyStorage { get; } = new Storage<string>();
         public void Configuration(IAppBuilder appBuilder)
         {
-            // Configure Web API for self-host. 
-            HttpConfiguration config = new HttpConfiguration();
+            // Конфигурируем под self-host.
+            var config = new HttpConfiguration();
             config.MapHttpAttributeRoutes();
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
@@ -29,11 +28,7 @@ namespace ElmaTestService
             );
 
             appBuilder.UseWebApi(config);
-            //var conf = new HubConfiguration();
-            //conf.Resolver.
             appBuilder.MapSignalR();
-            MyStorage.Attach(new HubObserver<string>());
-            //MyStorage.Add("1", "fswedfsedfsd");
         }
     }
 }
