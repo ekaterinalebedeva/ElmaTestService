@@ -10,25 +10,27 @@ namespace ElmaTestService.Broadcast
 {
     class NotificationClient : IDisposable
     {
+        private HubConnection _hubConnection;
         public NotificationClient(string url)
         {
-            SetConnectionAsync(url);
+            SetConnectionAsync(url).Wait();
+            Console.WriteLine($"Established connection to {url}.");
 
         }
-         
-        private async void SetConnectionAsync(string url)
+
+        private async Task<bool> SetConnectionAsync(string url)
         {
-            using (var hubConnection = new HubConnection(url))
-            {
-                IHubProxy notfificationHubProxy = hubConnection.CreateHubProxy("NotificationHub");
-                //notfificationHubProxy.On<string>("AddKey", stock => Console.WriteLine("Stock update for {0} new price {1}", stock.Symbol, stock.Price));
-                //ServicePointManager.DefaultConnectionLimit = 10;
-                await hubConnection.Start();
-            }
+            _hubConnection = new HubConnection(url);
+            IHubProxy notfificationHubProxy = _hubConnection.CreateHubProxy("NotificationHub");
+            //notfificationHubProxy.On<string>("AddKey", stock => Console.WriteLine("Stock update for {0} new price {1}", stock.Symbol, stock.Price));
+            //ServicePointManager.DefaultConnectionLimit = 10;
+            await _hubConnection.Start();
+            return true;
         }
 
         public void Dispose()
         {
+            _hubConnection.Dispose();
             //TODO throw new NotImplementedException();
         }
     }
