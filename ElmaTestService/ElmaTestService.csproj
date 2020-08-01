@@ -107,9 +107,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Broadcast\NotificationClient.cs" />
-    <Compile Include="Broadcast\NotificationHub.cs" />
+    <Compile Include="Broadcasting\Broadcast.cs" />
+    <Compile Include="Broadcasting\NotificationClient.cs" />
+    <Compile Include="Broadcasting\NotificationHub.cs" />
     <Compile Include="Controllers\DataController.cs" />
+    <Compile Include="Observers\Hub\HubObserver.cs" />
+    <Compile Include="Observers\AObservable.cs" />
+    <Compile Include="Observers\IObserver.cs" />
+    <Compile Include="Observers\Observable.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup .cs" />

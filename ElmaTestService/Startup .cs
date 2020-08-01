@@ -8,6 +8,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
 using Microsoft.Owin;
+using ElmaTestService.Observers.Hub;
 
 [assembly: OwinStartup(typeof(ElmaTestService.Startup))]
 
@@ -31,6 +32,7 @@ namespace ElmaTestService
             //var conf = new HubConfiguration();
             //conf.Resolver.
             appBuilder.MapSignalR();
+            MyStorage.Attach(new HubObserver<string>());
             MyStorage.Add("1", "fswedfsedfsd");
         }
     }

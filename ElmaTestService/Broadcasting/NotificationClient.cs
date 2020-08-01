@@ -8,19 +8,24 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Http.Controllers;
 
-namespace ElmaTestService.Broadcast
+namespace ElmaTestService.Broadcasting
 {
     class NotificationClient : IDisposable
     {
         private HubConnection _hubConnection;
-        public NotificationClient(string url)
+
+        private readonly Broadcast _broadcast;
+
+        public NotificationClient(string url) : this(Broadcast.Instance, url) { }
+
+        public NotificationClient(Broadcast broadcast, string url)
         {
-            SetConnectionAsync(url).Wait();
-            //var task = SetConnectionAsync(url);
-            //task.Wait();
-            //if (task.Result)
+            _broadcast = broadcast; 
+            var task = SetConnectionAsync(url);
+            task.Wait();
+            if (!task.Result)
             {
-                
+                throw new Exception($"Не удалось подключиться к {url}.");
             }
         }
 
@@ -28,13 +33,12 @@ namespace ElmaTestService.Broadcast
         {
             _hubConnection = new HubConnection(url);
             IHubProxy notificationHubProxy = _hubConnection.CreateHubProxy("NotificationHub");
-            notificationHubProxy.On<string>("GetAllKeys", key => Console.WriteLine($"Пришли ключи {key}"));
+            notificationHubProxy.On<IEnumerable<string>>("GetAllKeys", key => Console.WriteLine($"client: Пришли ключи {string.Join("     ",key)}"));
             //ServicePointManager.DefaultConnectionLimit = 100;
             await _hubConnection.Start();
             if (_hubConnection.State == ConnectionState.Connected)
             {
-                Console.WriteLine($"Established connection to {url}.");
-                await notificationHubProxy.Invoke("GetAllKeys");
+                Console.WriteLine($"client: Established connection to {url}.");
             }
             return true;
         }
@@ -42,7 +46,6 @@ namespace ElmaTestService.Broadcast
         public void Dispose()
         {
             _hubConnection.Dispose();
-            //TODO throw new NotImplementedException();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ElmaTestService.Observers;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,30 +13,27 @@ namespace ElmaTestService
         bool Add(string key, TItem value);
         bool Remove(string key);
         bool TryGetByKey(string key, out TItem value);
+        IEnumerable<string> GetAllKeys();
     }
-    public class Storage<TItem> : IStorage<TItem>
+    public class Storage<TItem> : Observable<string>, IStorage<TItem>
     {
-        private ConcurrentDictionary<string, TItem> _values;
-        public ConcurrentDictionary<string, TItem> Values
-        {
-            get
-            {
-                if (_values == null)
-                {
-                    _values = new ConcurrentDictionary<string, TItem>();
-                }
+        private ConcurrentDictionary<string, TItem> _values = new ConcurrentDictionary<string, TItem>();
 
-                return _values;
-            }
-        }
         public bool Add(string key, TItem value)
         {
-            Values[key] = value;
+            _values[key] = value;
             return true;
         }
 
-        public bool Remove(string key) => Values.TryRemove(key, out var value);
+        public bool Remove(string key) => _values.TryRemove(key, out var value);
 
-        public bool TryGetByKey(string key, out TItem value) => Values.TryGetValue(key, out value);
+        public bool TryGetByKey(string key, out TItem value) => _values.TryGetValue(key, out value);
+
+        public IEnumerable<string> GetAllKeys()
+        {
+            return _values.Keys;
+        }
     }
+
+
 }

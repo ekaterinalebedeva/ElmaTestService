@@ -1,4 +1,4 @@
-﻿using ElmaTestService.Broadcast;
+﻿using ElmaTestService.Broadcasting;
 using System;
 using System.Linq;
 using System.Net;
@@ -14,8 +14,8 @@ namespace ElmaTestService.Controllers
         [HttpGet]
         public IHttpActionResult Get()
         {
-            var allCache = _storage.Values.ToList();
-            return Ok(string.Join("\r\n", allCache.Select(p => $"{p.Key}    {p.Value}").ToList()));
+            var allCache = _storage.GetAllKeys();
+            return Ok(string.Join("\r\n", allCache));
         }
 
         [HttpGet]
@@ -35,7 +35,6 @@ namespace ElmaTestService.Controllers
             {
                 return NotFound();
             }
-            SendMessage("delete", key);
             return Ok($"{key} deleted");
         }
 
@@ -47,17 +46,7 @@ namespace ElmaTestService.Controllers
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
             }
             _storage.Add(key, value);
-            SendMessage("add", key);
             return Ok($"{key} added");
-        }
-
-        private void SendMessage(string method, string key)
-        {
-            // Получаем контекст хаба
-            var context =
-                Microsoft.AspNet.SignalR.GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
-            // отправляем сообщение
-            context.Clients.All.displayMessage(method, key);
         }
     }
 }

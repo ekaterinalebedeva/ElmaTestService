@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Net.Http;
 using Topshelf;
-using ElmaTestService.Broadcast;
+using ElmaTestService.Broadcasting;
 
 namespace ElmaTestService
 {
@@ -40,7 +40,7 @@ namespace ElmaTestService
             {
                 try
                 {
-                    var url = "http://192.168.1.175:5000";
+                    var url = "http://192.168.1.175:5000/signalr";
                     client = new NotificationClient(url);
                 }
                 catch
@@ -57,8 +57,8 @@ namespace ElmaTestService
 
             public void Stop()
             {
-                webServer.Dispose();
-                client.Dispose();
+                webServer?.Dispose();
+                client?.Dispose();
             }
         }
     }
