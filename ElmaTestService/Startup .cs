@@ -33,7 +33,7 @@ namespace ElmaTestService
             //conf.Resolver.
             appBuilder.MapSignalR();
             MyStorage.Attach(new HubObserver<string>());
-            MyStorage.Add("1", "fswedfsedfsd");
+            //MyStorage.Add("1", "fswedfsedfsd");
         }
     }
 }

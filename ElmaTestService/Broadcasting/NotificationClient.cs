@@ -34,7 +34,8 @@ namespace ElmaTestService.Broadcasting
             _hubConnection = new HubConnection(url);
             IHubProxy notificationHubProxy = _hubConnection.CreateHubProxy("NotificationHub");
             notificationHubProxy.On<IEnumerable<object>>("GetAllKeys", key => Console.WriteLine($"client: Пришли ключи {string.Join("     ",key)}"));
-            notificationHubProxy.On<string>("AddKey", key => Console.WriteLine($"client: сервер добавил ключ {key}"));
+            notificationHubProxy.On<object>("AddKey", key => Console.WriteLine($"client: сервер добавил ключ {key}"));
+            notificationHubProxy.On<object>("DeleteKey", key => Console.WriteLine($"client: сервер удалил ключ {key}"));
             //ServicePointManager.DefaultConnectionLimit = 100;
             await _hubConnection.Start();
             if (_hubConnection.State == ConnectionState.Connected)

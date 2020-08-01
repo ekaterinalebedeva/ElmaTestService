@@ -46,13 +46,13 @@ namespace ElmaTestService
                 catch
                 { }
                 webServer = WebApp.Start<Startup>(options);
-                try
-                {
-                    var url = "http://localhost:5000/signalr";
-                    var client1 = new NotificationClient(url);
-                }
-                catch
-                { }
+                //try
+                //{
+                //    var url = "http://localhost:5000/signalr";
+                //    var client1 = new NotificationClient(url);
+                //}
+                //catch
+                //{ }
             }
 
             public void Stop()
