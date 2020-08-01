@@ -44,27 +44,29 @@ namespace ElmaTestService.Broadcasting
         public void OnClientConnected(dynamic client)
         {
             client.GetAllKeys(MyStorage.GetAllKeys(), _hubUrl);
-            Console.WriteLine("server:отправил ключи");
+            Console.WriteLine("server: отправил ключи");
         }
 
         public void AddKey(object key)
         {
             Clients.All.AddKey(key, _hubUrl);
-            Console.WriteLine($"server:добавил ключ {key}");
+            Console.WriteLine($"server: клиенты, добавьте мой ключ {key}");
         }
         public void DeleteKey(object key)
         {
             Clients.All.DeleteKey(key);
-            Console.WriteLine($"server:удалил ключ {key}");
+            Console.WriteLine($"server: клиенты, удалите ключ {key}");
         }
 
         public void AddClientKey(object key, string url)
         {
             Program.OtherServersKeys[key as string] = url;
+            Console.WriteLine($"server: по запросу добавил ключ {key} клиента {url}");
         }
         public void DeleteClientKey(string key)
         {
             Program.OtherServersKeys.TryRemove(key, out var value);
+            Console.WriteLine($"server: по запросу удалил ключ {key} клиента");
         }
     }
 }
