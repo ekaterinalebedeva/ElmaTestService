@@ -13,8 +13,9 @@ namespace ElmaTestService.Broadcast
         public NotificationClient(string url)
         {
             SetConnectionAsync(url);
-        }
 
+        }
+         
         private async void SetConnectionAsync(string url)
         {
             using (var hubConnection = new HubConnection(url))

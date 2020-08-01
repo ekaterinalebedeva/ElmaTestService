@@ -25,6 +25,8 @@ namespace ElmaTestService
             );
 
             appBuilder.UseWebApi(config);
+            //var conf = new HubConfiguration();
+            //conf.Resolver.
             appBuilder.MapSignalR();
             MyStorage.Add("1", "fswedfsedfsd");
         }

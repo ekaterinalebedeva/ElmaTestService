@@ -38,7 +38,14 @@ namespace ElmaTestService
             }
             public void Start()
             {
-                client = new NotificationClient("http://192.168.1.175:5000");
+                try
+                {
+                    var url = "http://192.168.1.175:5000";
+                    client = new NotificationClient(url);
+                    Console.WriteLine($"Established connection to {url}.");
+                }
+                catch
+                { }
                 webServer = WebApp.Start<Startup>(options);
             }
 
