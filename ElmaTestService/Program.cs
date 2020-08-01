@@ -61,8 +61,8 @@ namespace ElmaTestService
                 try
                 {
                     var url = "http://192.168.1.175:5000";
-                    var client = new NotificationClient(url, Program.OtherServersKeys);
-                    Program.Clients.Add(client);
+                    var client = new NotificationClient(url, OtherServersKeys);
+                    Clients.Add(client);
                 }
                 catch
                 { }

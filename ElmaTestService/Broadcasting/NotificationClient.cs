@@ -24,6 +24,7 @@ namespace ElmaTestService.Broadcasting
 
         public NotificationClient(string url, IDictionary<string, string> storage)
         {
+            _storage = storage;
             var task = SetConnectionAsync(url);
             task.Wait();
             if (!task.Result)
@@ -31,7 +32,6 @@ namespace ElmaTestService.Broadcasting
                 throw new Exception($"Не удалось подключиться к {url}.");
             }
 
-            _storage = storage;
         }
 
         private async Task<bool> SetConnectionAsync(string url)
