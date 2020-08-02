@@ -25,6 +25,7 @@ namespace ElmaTestService
             var serviceProvider = IocStartup.BuildServiceProvider();
             config.DependencyResolver = new DefaultDependencyResolver(serviceProvider);
 
+            GlobalHost.Configuration.ConnectionTimeout = TimeSpan.FromSeconds(3);
             appBuilder.UseWebApi(config);
             appBuilder.MapSignalR();
         }

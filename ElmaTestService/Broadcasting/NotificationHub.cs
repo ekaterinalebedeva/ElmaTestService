@@ -1,5 +1,4 @@
-﻿using ElmaTestService.Models;
-using Microsoft.AspNet.SignalR;
+﻿using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using System;
 using System.Collections.Concurrent;
@@ -15,7 +14,7 @@ namespace ElmaTestService.Broadcasting
     {
         private readonly Broadcast _broadcast;
 
-        public NotificationHub(IStoragable<string,string> storage, IDictionary<string,string> otherServersKeys) : this(Broadcast.GetInstance(storage, otherServersKeys)) { }
+        public NotificationHub() : this(Broadcast.Instance) { }
 
         public NotificationHub(Broadcast broadcast)
         {

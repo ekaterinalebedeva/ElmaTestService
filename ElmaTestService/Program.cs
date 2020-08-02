@@ -29,15 +29,12 @@ namespace ElmaTestService
         /// </summary>
         public static BlockingCollection<NotificationClient> Clients { get; } = new BlockingCollection<NotificationClient>();
         /// <summary>
-        /// Порт. Задается в app.config
+        /// Порт. Можно задать из параметров командной строки
         /// </summary>
         public static string Port { get; set; } = ConfigurationManager.AppSettings.Get("Port");
-        /// <summary>
-        /// Свой IP в локальной сети
-        /// </summary>
         public static string MyIP { get; set; }
         /// <summary>
-        /// Полный URL в локальной сети
+        /// Свой URL в локальной сети
         /// </summary>
         public static string MyUrl { get; set; }
         static void Main(string[] args)
@@ -45,7 +42,7 @@ namespace ElmaTestService
             SetUrl();
 
             // Присоединяем наблюдателя-сервера, который будет отсылать уведомления клиентам.
-            MyStorage.Attach(new HubObserver<string>(MyStorage, OtherServersKeys));
+            MyStorage.Attach(new HubObserver<string>());
             MyStorage.Attach(new ClientObserver<string>());
             HostFactory.Run(x =>
             {
@@ -105,6 +102,7 @@ namespace ElmaTestService
                     try
                     {
                         var clientUrl = $"http://{ip}:{Port}";
+                        Console.WriteLine(clientUrl);
                         var client = new NotificationClient(clientUrl, OtherServersKeys);
                         Clients.Add(client);
                     }
