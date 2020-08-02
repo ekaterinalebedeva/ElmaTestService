@@ -8,7 +8,11 @@ using System.Threading.Tasks;
 
 namespace ElmaTestService.Models
 {
-
+    /// <summary>
+    /// Хранилище ключей-значений
+    /// </summary>
+    /// <typeparam name="TKey"></typeparam>
+    /// <typeparam name="TValue"></typeparam>
     public class Storage<TKey, TValue> : Observable<TKey>, IStoragable<TKey, TValue>
     {
         private ConcurrentDictionary<TKey, TValue> _values = new ConcurrentDictionary<TKey, TValue>();

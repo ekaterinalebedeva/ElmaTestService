@@ -34,9 +34,13 @@ namespace ElmaTestService.Controllers
             {
                 // Найти на других серверах и отдать.
                 // TODO избежать зацикливания между 2 серверами (коллизии!).
-                if (_otherStorage.ContainsKey(key) && GetFromServer(_otherStorage[key], key, out value))
+                if (_otherStorage.ContainsKey(key))
                 {
-                    return Ok(value);
+                    Console.WriteLine($"Запрос на получение перенаправлен на {_otherStorage[key]}.");
+                    if (GetFromServer(_otherStorage[key], key, out value))
+                    {
+                        return Ok(value);
+                    }
                 }
                 return NotFound();
             }
@@ -47,7 +51,16 @@ namespace ElmaTestService.Controllers
         public IHttpActionResult Delete(string key)
         {
             if (!_storage.Remove(key))
-            {
+            {   
+                // Найти на других серверах и отдать.
+                if (_otherStorage.ContainsKey(key))
+                {
+                    Console.WriteLine($"Запрос на удаление перенаправлен на {_otherStorage[key]}.");
+                    if (DeleteFromServer(_otherStorage[key], key))
+                    {
+                        return Ok($"{key} deleted");
+                    }
+                }
                 return NotFound();
             }
             return Ok($"{key} deleted");
@@ -65,6 +78,13 @@ namespace ElmaTestService.Controllers
             return Ok($"{key} added");
         }
 
+        /// <summary>
+        /// Запрос значения с другого сервера
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="key">Искомый ключ</param>
+        /// <param name="value">Выходной параметр со значением, если удалось его получить</param>
+        /// <returns>true, если удалось успешно получить значение</returns>
         private bool GetFromServer(string url, string key, out string value)
         {
             value = null;
@@ -84,6 +104,27 @@ namespace ElmaTestService.Controllers
             catch
             {
                 Console.WriteLine($"Не удалось получить значение ключа {key} с сервера {url}.");
+            }
+            return false;
+        }
+        /// <summary>
+        /// Запрос на удаление ключа на другом сервере
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="key"></param>
+        /// <returns>Ключ успешно удален по запросу</returns>
+        private bool DeleteFromServer(string url, string key)
+        {
+            try
+            {
+                var request = WebRequest.Create($"{url}/data/{key}");
+                request.Method = "DELETE";
+                var response = (HttpWebResponse)request.GetResponse();
+                return response.StatusCode == HttpStatusCode.OK;
+            }
+            catch
+            {
+                Console.WriteLine($"Не удалось удалить ключ {key} с сервера {url}.");
             }
             return false;
         }
