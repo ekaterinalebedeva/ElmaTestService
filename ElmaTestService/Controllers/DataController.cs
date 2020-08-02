@@ -34,7 +34,7 @@ namespace ElmaTestService.Controllers
             {
                 // Найти на других серверах и отдать.
                 // TODO избежать зацикливания между 2 серверами (коллизии!).
-                if (_otherStorage.ContainsKey(key) && GetFromServer(_otherStorage[key], string key, out var value))
+                if (_otherStorage.ContainsKey(key) && GetFromServer(_otherStorage[key], key, out value))
                 {
                     return Ok(value);
                 }
