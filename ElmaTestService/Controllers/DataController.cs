@@ -10,23 +10,44 @@ using System.Web.Http;
 
 namespace ElmaTestService.Controllers
 {
+    /// <summary>
+    /// Основной и единственный контроллер, предоставляющий api по работе с кэшем
+    /// </summary>
     public class DataController : ApiController
     {
+        /// <summary>
+        /// Хранилище ключей значений сервера
+        /// </summary>
         private IStoragable<string, string> _storage;
+        /// <summary>
+        /// Хранилище ключей, расположенных на других серверах
+        /// </summary>
         private IDictionary<string, string> _otherStorage;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="storage">Хранилище ключей значений сервера</param>
+        /// <param name="otherStorage">Хранилище ключей, расположенных на других серверах</param>
         public DataController(IStoragable<string, string> storage, IDictionary<string, string> otherStorage)
         {
             _storage = storage;
             _otherStorage = otherStorage;
         }
-
+        /// <summary>
+        /// Получить все ключи на этом сервере
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public IHttpActionResult Get()
         {
             var allCache = _storage.GetAllKeys();
             return Ok(string.Join("\r\n", allCache));
         }
-
+        /// <summary>
+        /// Получить значение кэша по ключу
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         [HttpGet]
         public IHttpActionResult Get(string key)
         {
@@ -46,7 +67,11 @@ namespace ElmaTestService.Controllers
             }
             return Ok(value);
         }
-
+        /// <summary>
+        /// Удалить значение по ключу
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         [HttpDelete]
         public IHttpActionResult Delete(string key)
         {
@@ -65,7 +90,12 @@ namespace ElmaTestService.Controllers
             }
             return Ok($"{key} deleted");
         }
-
+        /// <summary>
+        /// Добавить кэш в виде ключ-значение
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         [HttpPost]
         public IHttpActionResult Add(string key, [FromBody] string value)
         {

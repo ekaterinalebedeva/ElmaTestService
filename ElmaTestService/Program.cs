@@ -6,6 +6,10 @@ using ElmaTestService.Models;
 using ElmaTestService.Observers.Hub;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Net;
+using Microsoft.Owin.BuilderProperties;
+using System.Linq;
+using System.Configuration;
 
 namespace ElmaTestService
 {
@@ -22,11 +26,20 @@ namespace ElmaTestService
         /// <summary>
         /// Коллекция подключений к другим серверам для отправки им уведомлений
         /// </summary>
-        public static List<NotificationClient> Clients { get; } = new List<NotificationClient>();
-        public static string MyUrl { get; } = "http://192.168.1.201:5000";
+        public static BlockingCollection<NotificationClient> Clients { get; } = new BlockingCollection<NotificationClient>();
+        /// <summary>
+        /// Порт. Можно задать из параметров командной строки
+        /// </summary>
+        public static string Port { get; set; } = ConfigurationManager.AppSettings.Get("Port");
+        /// <summary>
+        /// Свой URL в локальной сети
+        /// </summary>
+        public static string MyUrl { get; set; }
         static void Main(string[] args)
         {
-            // Присоединяем наблюдателя-сервера, который будет отсылать уведомления клиентам
+            SetUrl();
+
+            // Присоединяем наблюдателя-сервера, который будет отсылать уведомления клиентам.
             MyStorage.Attach(new HubObserver<string>());
             MyStorage.Attach(new ClientObserver<string>());
             HostFactory.Run(x =>
@@ -43,41 +56,67 @@ namespace ElmaTestService
                 x.SetServiceName("Elma");
             });
         }
+        /// <summary>
+        /// Пытаемся получить свой IP в локальной сети
+        /// </summary>
+        static void SetUrl()
+        {
+            string hostName = Dns.GetHostName(); 
+            Console.WriteLine($"hostName {hostName}");
+            MyUrl = Dns.GetHostEntry(hostName).AddressList.LastOrDefault(address => address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)?.ToString();
+            if (string.IsNullOrEmpty(MyUrl))
+            {
+                throw new Exception("Не удалось получить адрес в локальной сети");
+            }
+            MyUrl = $"http://{MyUrl}:{Port}";
+            Console.WriteLine($"IP {MyUrl}");
+        }
         public class ServiceApi
         {
-
-            IDisposable webServer;
-            StartOptions options = new StartOptions();
+            private IDisposable _webServer;
+            private StartOptions _options = new StartOptions();
             public ServiceApi()
             {
-                options.Urls.Add("http://localhost:5000");
-                options.Urls.Add("http://+:5000");
+                _options.Urls.Add(MyUrl);
             }
             public void Start()
             {
-                
-                try
+                // Ищем по сети хабы.
+                CreateClients();
+                _webServer = WebApp.Start<Startup>(_options);
+            }
+            /// <summary>
+            /// Пройти по локальной сети и установить соединение с уже запущенными серверами
+            /// </summary>
+            private void CreateClients()
+            {
+                var urls = new List<string>();
+                var _ipPrefix = MyUrl.Split('.');
+                for (int i = 0; i <= 255; i++)
                 {
-                    var url = "http://192.168.1.175:5000";
-                    var client = new NotificationClient(url, OtherServersKeys);
-                    Clients.Add(client);
+                    _ipPrefix[3] = $"{i}:{Port}";
+                    var scanIP = string.Join(".", _ipPrefix);
+                    if (scanIP == MyUrl) continue;
+                    urls.Add(scanIP);
                 }
-                catch
-                { }
-                webServer = WebApp.Start<Startup>(options);
-                //try
-                //{
-                //    var url = "http://localhost:5000";
-                //    var client1 = new NotificationClient(url, Program.OtherServersKeys);
-                //    Program.Clients.Add(client1);
-                //}
-                //catch
-                //{ }
+                urls.AsParallel().ForAll(url =>
+                {
+                    try
+                    {
+                        Console.WriteLine(url);
+                        var client = new NotificationClient(url, OtherServersKeys);
+                        Clients.Add(client);
+                    }
+                    catch
+                    {
+                        // Нет соединения, ну и ладно.
+                    }
+                });
             }
 
             public void Stop()
             {
-                webServer?.Dispose();
+                _webServer?.Dispose();
             }
         }
     }

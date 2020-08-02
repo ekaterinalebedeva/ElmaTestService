@@ -11,7 +11,7 @@ namespace ElmaTestService.Observers.Hub
     {
         public void OnAdd(T handle)
         {
-            Program.Clients.ForEach(client =>
+            Program.Clients.AsParallel().ForAll(client =>
             {
                 client.AddKey(handle);
             });
@@ -19,7 +19,7 @@ namespace ElmaTestService.Observers.Hub
 
         public void OnDelete(T handle)
         {
-            Program.Clients.ForEach(client =>
+            Program.Clients.AsParallel().ForAll(client =>
             {
                 client.DeleteKey(handle);
             });
