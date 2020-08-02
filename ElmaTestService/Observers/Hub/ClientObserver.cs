@@ -9,14 +9,9 @@ namespace ElmaTestService.Observers.Hub
 {
     public class ClientObserver<T> : IObserver<T>
     {
-        private IEnumerable<NotificationClient> _clients;
-        public ClientObserver(IEnumerable<NotificationClient> clients)
-        {
-            _clients = clients;
-        }
         public void OnAdd(T handle)
         {
-            _clients.AsParallel().ForAll(client =>
+            Program.Clients.AsParallel().ForAll(client =>
             {
                 client.AddKey(handle);
             });
@@ -24,7 +19,7 @@ namespace ElmaTestService.Observers.Hub
 
         public void OnDelete(T handle)
         {
-            _clients.AsParallel().ForAll(client =>
+            Program.Clients.AsParallel().ForAll(client =>
             {
                 client.DeleteKey(handle);
             });

@@ -15,7 +15,7 @@ namespace ElmaTestService.Broadcasting
     /// <summary>
     /// Клиент, который уведомляет об изменениях в хранилище
     /// </summary>
-    public class NotificationClient : IDisposable
+    class NotificationClient : IDisposable
     {
         private readonly IDictionary<string, string> _storage;
         private HubConnection _hubConnection;
