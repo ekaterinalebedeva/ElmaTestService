@@ -46,7 +46,7 @@ namespace ElmaTestService
 
             // Присоединяем наблюдателя-сервера, который будет отсылать уведомления клиентам.
             MyStorage.Attach(new HubObserver<string>(MyStorage, OtherServersKeys));
-            MyStorage.Attach(new ClientObserver<string>());
+            MyStorage.Attach(new ClientObserver<string>(Program.Clients));
             HostFactory.Run(x =>
             {
                 x.Service<ServiceApi>(p =>
