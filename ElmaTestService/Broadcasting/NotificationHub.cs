@@ -16,7 +16,7 @@ namespace ElmaTestService.Broadcasting
 
         public NotificationHub() : this(Broadcast.Instance) { }
 
-        public NotificationHub(Broadcast broadcast)
+        private NotificationHub(Broadcast broadcast)
         {
             _broadcast = broadcast;
         }
