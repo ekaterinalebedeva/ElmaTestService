@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace ElmaTestService
 {
-    class Ping
+    /// <summary>
+    /// Сканирующий локальную сеть класс
+    /// </summary>
+    public class Ping
     {
         private string _baseIP;
         private int _startIP = 1;
