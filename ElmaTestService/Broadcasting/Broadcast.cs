@@ -1,17 +1,13 @@
 ﻿using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ElmaTestService.Models;
 
 namespace ElmaTestService.Broadcasting
 {
     public class Broadcast
     {
-        public readonly IStorage<string, string> MyStorage = Program.MyStorage;
+        public readonly IStoragable<string, string> MyStorage = Program.MyStorage;
         
         /// <summary>
         ///  Singleton instance

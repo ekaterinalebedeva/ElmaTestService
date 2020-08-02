@@ -1,15 +1,17 @@
-﻿using ElmaTestService.Broadcasting;
-using System;
-using System.Linq;
+﻿using ElmaTestService.Models;
 using System.Net;
 using System.Web.Http;
-using System.Web.Http.Results;
 
 namespace ElmaTestService.Controllers
 {
     public class DataController : ApiController
     {
-        private readonly Storage<string, string> _storage = Program.MyStorage;
+        private IStoragable<string, string> _storage = Program.MyStorage;
+
+        //public DataController(IStoragable<string, string> storage)
+        //{
+        //    _storage = storage;
+        //}
 
         [HttpGet]
         public IHttpActionResult Get()

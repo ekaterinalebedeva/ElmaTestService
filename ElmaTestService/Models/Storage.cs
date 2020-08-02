@@ -6,16 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ElmaTestService
+namespace ElmaTestService.Models
 {
-    public interface IStorage<TKey, TValue>
-    {
-        bool Add(TKey key, TValue value);
-        bool Remove(TKey key);
-        bool TryGetByKey(TKey key, out TValue value);
-        IEnumerable<TKey> GetAllKeys();
-    }
-    public class Storage<TKey, TValue> : Observable<TKey>, IStorage<TKey, TValue>
+
+    public class Storage<TKey, TValue> : Observable<TKey>, IStoragable<TKey, TValue>
     {
         private ConcurrentDictionary<TKey, TValue> _values = new ConcurrentDictionary<TKey, TValue>();
 

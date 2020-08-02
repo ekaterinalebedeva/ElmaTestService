@@ -1,12 +1,10 @@
 ﻿using Microsoft.Owin.Hosting;
 using System;
-using System.Linq;
-using System.Net.Http;
 using Topshelf;
 using ElmaTestService.Broadcasting;
+using ElmaTestService.Models;
 using ElmaTestService.Observers.Hub;
 using System.Collections.Concurrent;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace ElmaTestService
