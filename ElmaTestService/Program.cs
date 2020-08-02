@@ -10,6 +10,7 @@ using System.Net;
 using Microsoft.Owin.BuilderProperties;
 using System.Linq;
 using System.Configuration;
+using System.Threading.Tasks;
 
 namespace ElmaTestService
 {
@@ -31,6 +32,7 @@ namespace ElmaTestService
         /// Порт. Можно задать из параметров командной строки
         /// </summary>
         public static string Port { get; set; } = ConfigurationManager.AppSettings.Get("Port");
+        public static string MyIP { get; set; }
         /// <summary>
         /// Свой URL в локальной сети
         /// </summary>
@@ -63,12 +65,12 @@ namespace ElmaTestService
         {
             string hostName = Dns.GetHostName(); 
             Console.WriteLine($"hostName {hostName}");
-            MyUrl = Dns.GetHostEntry(hostName).AddressList.LastOrDefault(address => address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)?.ToString();
-            if (string.IsNullOrEmpty(MyUrl))
+            MyIP = Dns.GetHostEntry(hostName).AddressList.LastOrDefault(address => address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)?.ToString();
+            if (string.IsNullOrEmpty(MyIP))
             {
                 throw new Exception("Не удалось получить адрес в локальной сети");
             }
-            MyUrl = $"http://{MyUrl}:{Port}";
+            MyUrl = $"http://{MyIP}:{Port}";
             Console.WriteLine($"IP {MyUrl}");
         }
         public class ServiceApi
@@ -90,15 +92,11 @@ namespace ElmaTestService
             /// </summary>
             private void CreateClients()
             {
-                var urls = new List<string>();
-                var _ipPrefix = MyUrl.Split('.');
-                for (int i = 0; i <= 255; i++)
-                {
-                    _ipPrefix[3] = $"{i}:{Port}";
-                    var scanIP = string.Join(".", _ipPrefix);
-                    if (scanIP == MyUrl) continue;
-                    urls.Add(scanIP);
-                }
+                
+                var baseIP = MyIP.Substring(0, 1 + MyIP.LastIndexOf("."));
+                var pings = new Ping(baseIP);
+                pings.RunPingSweepAsync().Wait();
+                var urls = pings.Urls;
                 urls.AsParallel().ForAll(url =>
                 {
                     try

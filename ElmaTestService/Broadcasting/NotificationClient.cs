@@ -38,6 +38,7 @@ namespace ElmaTestService.Broadcasting
         {
             _hubUrl = url;
             _hubConnection = new HubConnection($"{url}/signalr");
+            _hubConnection.TransportConnectTimeout =TimeSpan.FromSeconds(1);
             _notificationHubProxy = _hubConnection.CreateHubProxy("NotificationHub");
             _notificationHubProxy.On<IEnumerable<string>>("GetAllKeys", keys =>
             {
