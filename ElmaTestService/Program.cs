@@ -96,13 +96,14 @@ namespace ElmaTestService
                 var baseIP = MyIP.Substring(0, 1 + MyIP.LastIndexOf("."));
                 var pings = new Ping(baseIP);
                 pings.RunPingSweepAsync().Wait();
-                var urls = pings.Urls;
-                urls.AsParallel().ForAll(url =>
+                var IPs = pings.Urls;
+                IPs.AsParallel().ForAll(ip =>
                 {
                     try
                     {
-                        Console.WriteLine(url);
-                        var client = new NotificationClient(url, OtherServersKeys);
+                        var clientUrl = $"http://{ip}:{Port}";
+                        Console.WriteLine(clientUrl);
+                        var client = new NotificationClient(clientUrl, OtherServersKeys);
                         Clients.Add(client);
                     }
                     catch
