@@ -65,14 +65,14 @@ namespace ElmaTestService
                 catch
                 { }
                 webServer = WebApp.Start<Startup>(options);
-                //try
-                //{
-                //    var url = "http://localhost:5000";
-                //    var client1 = new NotificationClient(url, Program.OtherServersKeys);
-                //    Program.Clients.Add(client1);
-                //}
-                //catch
-                //{ }
+                try
+                {
+                    var url = "http://localhost:5000";
+                    var client1 = new NotificationClient(url, Program.OtherServersKeys);
+                    Program.Clients.Add(client1);
+                }
+                catch
+                { }
             }
 
             public void Stop()

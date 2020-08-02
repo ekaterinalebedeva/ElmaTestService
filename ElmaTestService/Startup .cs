@@ -19,6 +19,10 @@ namespace ElmaTestService
                 defaults: new { key = RouteParameter.Optional }
             );
 
+            // Add IoC
+            var serviceProvider = IocStartup.BuildServiceProvider();
+            config.DependencyResolver = new DefaultDependencyResolver(serviceProvider);
+
             appBuilder.UseWebApi(config);
             appBuilder.MapSignalR();
         }
